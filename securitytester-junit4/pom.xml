@@ -10,6 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>securitytester-junit4</artifactId>
+    <packaging>jar</packaging>
+    <name>testIT | SecurityTester - JUnit4</name>
 
     <dependencies>
         <dependency>

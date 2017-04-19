@@ -4,7 +4,7 @@ package info.novatec.testit;
  *
  */
 @SuppressWarnings("ALL")
-class ZapScannerConfiguration {
+public class ZapScannerConfiguration {
 
     private String baseUrl = "";
     private String apiKey = "";
@@ -13,9 +13,22 @@ class ZapScannerConfiguration {
     private String policy = "";
     private boolean inScopeOnly;
 
+    /**
+     * Constructor.
+     */
     ZapScannerConfiguration() {
     }
 
+    /**
+     * Constructor.
+     *
+     * @param baseUrl base url to scan
+     * @param apiKey api key to authorize scan
+     * @param targetHost target host to scan
+     * @param proxyPort proxy port
+     * @param policy policy for scanning
+     * @param inScopeOnly scan only in scope
+     */
     ZapScannerConfiguration(String baseUrl, String apiKey, String targetHost, String proxyPort, String policy, boolean inScopeOnly) {
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;

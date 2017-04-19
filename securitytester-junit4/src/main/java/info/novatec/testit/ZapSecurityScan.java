@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
  * JUnit rule for adding feature to run security tests.
  */
 @SuppressWarnings("ALL")
-class ZapSecurityScan extends ExternalResource {
+public class ZapSecurityScan extends ExternalResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger ( ZapSecurityScan.class );
 
@@ -33,13 +33,13 @@ class ZapSecurityScan extends ExternalResource {
     /**
      * Constructor.
      *
-     * @param site
-     * @param apiKey
-     * @param targetHost
-     * @param proxyPort
-     * @param policy
+     * @param site the site url to scan
+     * @param apiKey api key to authorize scan
+     * @param targetHost target host to scan
+     * @param proxyPort proxy port
+     * @param policy policy for scanning
      */
-    ZapSecurityScan(String site, String apiKey, String targetHost, String proxyPort, String policy) {
+    public ZapSecurityScan(String site, String apiKey, String targetHost, String proxyPort, String policy) {
         this.site = site;
         this.apiKey = apiKey;
         this.targetHost = targetHost;

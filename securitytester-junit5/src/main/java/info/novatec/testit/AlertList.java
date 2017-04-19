@@ -7,12 +7,11 @@ import java.util.List;
 /**
  * {@link ZapSecurityScanExtension} needs a class AlertList instead of List of Alerts.
  */
-@SuppressWarnings("ALL")
-class AlertList {
+public class AlertList {
 
     private List<Alert> alerts;
 
-    AlertList(List<Alert> alerts) {
+    public AlertList(List<Alert> alerts) {
         this.alerts = alerts;
     }
 

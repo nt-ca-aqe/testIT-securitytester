@@ -21,7 +21,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-class ZapSecurityScanExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
+public class ZapSecurityScanExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZapSecurityScanExtension.class);
 
