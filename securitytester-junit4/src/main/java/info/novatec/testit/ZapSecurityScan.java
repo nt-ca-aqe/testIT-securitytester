@@ -30,7 +30,15 @@ class ZapSecurityScan extends ExternalResource {
     private String policy;
     private boolean inScopeOnly;
 
-
+    /**
+     * Constructor.
+     *
+     * @param site
+     * @param apiKey
+     * @param targetHost
+     * @param proxyPort
+     * @param policy
+     */
     ZapSecurityScan(String site, String apiKey, String targetHost, String proxyPort, String policy) {
         this.site = site;
         this.apiKey = apiKey;
