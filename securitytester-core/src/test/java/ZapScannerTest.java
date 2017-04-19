@@ -13,7 +13,7 @@ public class ZapScannerTest {
         String host = "Localhost";
         String zapPort = "8090";
 
-        ZapScanner zapScanner = new ZapScannerImpl(apiKey, host, zapPort);
+        ZapScanner zapScanner = new ZapScannerImpl(apiKey, host, zapPort, true);
 
         zapScanner.completeScan(baseUrl, false, "");
 

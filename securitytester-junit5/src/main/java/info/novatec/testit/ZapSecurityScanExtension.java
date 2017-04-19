@@ -25,7 +25,8 @@ public class ZapSecurityScanExtension implements BeforeEachCallback, AfterTestEx
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZapSecurityScanExtension.class);
 
-    static final Function<ZapScannerConfiguration, ZapScanner>  DEFAULT_FACTORY =(config) -> new ZapScannerImpl(config.getApiKey(),config.getTargetHost(), config.getProxyPort());
+    static final Function<ZapScannerConfiguration, ZapScanner>  DEFAULT_FACTORY =(config)
+            -> new ZapScannerImpl(config.getApiKey(),config.getTargetHost(), config.getProxyPort(), true);
 
     private static Function<ZapScannerConfiguration, ZapScanner> zapScannerFactory = DEFAULT_FACTORY;
 

@@ -22,35 +22,43 @@ import java.util.List;
 public class ZapScannerImpl implements ZapScanner {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZapScannerImpl.class);
+    private static final String SESSION_NAME = "securitytester";
+    private static final String CONTEXT_NAME = "securitytester";
 
-    private final String apiKey;
     private ClientApi clientApi;
+    private boolean withSpider;
 
-
-    public ZapScannerImpl(String apiKey, String host, String port) {
-        this.apiKey = apiKey;
-
-        clientApi = new ClientApi(host, Integer.parseInt(port));
+    public ZapScannerImpl(String apiKey, String zapHost, String zapPort, boolean withSpider) {
+        this.withSpider = withSpider;
+        this.clientApi = new ClientApi(zapHost, Integer.parseInt(zapPort), apiKey);
         try {
-            clientApi.core.newSession(apiKey, null, "true");
+            clientApi.core.newSession(null, Boolean.TRUE.toString());
+            clientApi.context.newContext(CONTEXT_NAME);
+            clientApi.context.setContextInScope(CONTEXT_NAME, Boolean.TRUE.toString());
+        } catch (ClientApiException e) {
+            throw new UndeclaredThrowableException(e);
+        }
+    }
+
+    @Override
+    public List<Alert> completeScan(String baseUrl, boolean inScopeOnly, String scanPolicyName) {
+
+        try {
+            this.clientApi.context.includeInContext(CONTEXT_NAME, baseUrl + ".*");
         } catch (ClientApiException e) {
             throw new UndeclaredThrowableException(e);
         }
 
-    }
-
-
-    @Override
-    public List<Alert> completeScan(String baseUrl, boolean inScopeOnly, String scanPolicyName) {
         List<Alert> alerts = new ArrayList<>();
 
         LOG.info("Started complete scan");
         try {
 
-            spider(baseUrl);
-            Thread.sleep(1500);//Let Spider some Time!
-
-            allActiveScan(baseUrl, inScopeOnly, scanPolicyName);
+            if (withSpider) {
+                spider(baseUrl);
+                Thread.sleep(1500);//Let Spider some Time!
+            }
+            alerts.addAll(allActiveScan(baseUrl, inScopeOnly, scanPolicyName));
 
         } catch (InterruptedException e) {
             LOG.error("complete scan failed: " + e.getMessage());
@@ -69,8 +77,8 @@ public class ZapScannerImpl implements ZapScanner {
 
             //Active Scan needs an access Point! When it doesn't, it has to access first!
             if (!baseUrl.equals(clientApi.core.urls().getName())) {
-                clientApi.core.accessUrl(apiKey, baseUrl, null);
-                clientApi.core.accessUrl(apiKey, baseUrl, null);
+                clientApi.core.accessUrl(baseUrl, null);
+                clientApi.core.accessUrl(baseUrl, null);
             }
 
             clientApi.ascan.scan(baseUrl, "true",
@@ -100,7 +108,7 @@ public class ZapScannerImpl implements ZapScanner {
     public List<Alert> allActiveScan(String baseUrl, boolean inScopeOnly, String scanPolicyName) {
         List<Alert> alerts = new ArrayList<>();
         try {
-            clientApi.ascan.enableAllScanners(apiKey, scanPolicyName);
+            clientApi.ascan.enableAllScanners(scanPolicyName);
             alerts = activeScan(baseUrl, inScopeOnly, scanPolicyName);
         } catch (ClientApiException e) {
             LOG.error("All Active Scan failed: " + e.getMessage());
@@ -111,8 +119,8 @@ public class ZapScannerImpl implements ZapScanner {
     @Override
     public void enablePassiveScan() {
         try {
-            clientApi.pscan.setEnabled(apiKey, "true");
-            clientApi.pscan.enableAllScanners(apiKey);
+            clientApi.pscan.setEnabled("true");
+            clientApi.pscan.enableAllScanners();
 
         } catch (ClientApiException e) {
             LOG.error("Enable Passive Scan failed: " + e.getMessage());
@@ -122,7 +130,7 @@ public class ZapScannerImpl implements ZapScanner {
     @Override
     public void disablePassiveScan() {
         try {
-            clientApi.pscan.disableAllScanners(apiKey);
+            clientApi.pscan.disableAllScanners();
         } catch (ClientApiException e) {
             LOG.error("Disable Passive Scan failed: " + e.getMessage());
         }
@@ -134,7 +142,7 @@ public class ZapScannerImpl implements ZapScanner {
 
         try {
             ApiResponse resp = clientApi.spider.scan(
-                    apiKey, baseUrl, null, null, null, null);
+                    baseUrl, null, null, null, null);
             String scanId = ((ApiResponseElement) resp).getValue();
 
             int progress;
@@ -163,7 +171,6 @@ public class ZapScannerImpl implements ZapScanner {
         if (LOG.isInfoEnabled()) {
             LOG.info("Found {} Alerts:", alerts.size());
 
-            //sort(alerts, (o1, o2) -> o1.getRisk().compareTo(o2.getRisk()));
             alerts.sort(Comparator.comparing(Alert::getRisk));
 
             for (Alert alert : alerts) {

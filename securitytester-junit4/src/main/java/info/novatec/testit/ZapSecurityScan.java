@@ -48,7 +48,7 @@ public class ZapSecurityScan extends ExternalResource {
     }
 
     ZapScanner createZapScanner() {
-        return new ZapScannerImpl ( this.apiKey, this.targetHost, this.proxyPort );
+        return new ZapScannerImpl ( this.apiKey, this.targetHost, this.proxyPort, true );
     }
 
     ZapScanner getZapScanner() {

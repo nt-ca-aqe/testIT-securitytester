@@ -13,7 +13,7 @@ import java.util.List;
  * Special hamcrest Matcher for ZAP alerts.
  */
 @SuppressWarnings("unused")
-final class AlertMatchers {
+final public class AlertMatchers {
 
 
     public static class HighRiskAlertMatcher extends TypeSafeMatcher<Alert> {

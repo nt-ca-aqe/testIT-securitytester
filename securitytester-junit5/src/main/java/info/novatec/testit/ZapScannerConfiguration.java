@@ -11,12 +11,13 @@ public class ZapScannerConfiguration {
     private String targetHost = "";
     private String proxyPort = "";
     private String policy = "";
+    private boolean spider;
     private boolean inScopeOnly;
 
     /**
      * Constructor.
      */
-    ZapScannerConfiguration() {
+    public ZapScannerConfiguration() {
     }
 
     /**
@@ -28,14 +29,16 @@ public class ZapScannerConfiguration {
      * @param proxyPort proxy port
      * @param policy policy for scanning
      * @param inScopeOnly scan only in scope
+     * @param spider spider target url first
      */
-    ZapScannerConfiguration(String baseUrl, String apiKey, String targetHost, String proxyPort, String policy, boolean inScopeOnly) {
+    public ZapScannerConfiguration(String baseUrl, String apiKey, String targetHost, String proxyPort, String policy, boolean inScopeOnly, boolean spider) {
         this.baseUrl = baseUrl;
         this.apiKey = apiKey;
         this.targetHost = targetHost;
         this.proxyPort = proxyPort;
         this.policy = policy;
         this.inScopeOnly = inScopeOnly;
+        this.spider = spider;
     }
 
     public String getBaseUrl() {
@@ -84,5 +87,9 @@ public class ZapScannerConfiguration {
 
     public void setInScopeOnly(boolean inScopeOnly) {
         this.inScopeOnly = inScopeOnly;
+    }
+
+    public boolean isSpider() {
+        return spider;
     }
 }
