@@ -26,7 +26,7 @@ public class ZapSecurityScanExtension implements BeforeEachCallback, AfterTestEx
     private static final Logger LOGGER = LoggerFactory.getLogger(ZapSecurityScanExtension.class);
 
     static final Function<ZapScannerConfiguration, ZapScanner>  DEFAULT_FACTORY =(config)
-            -> new ZapScannerImpl(config.getApiKey(),config.getTargetHost(), config.getProxyPort(), true);
+            -> new ZapScannerImpl(config.getApiKey(),config.getTargetHost(), config.getProxyPort(), config.isSpider());
 
     private static Function<ZapScannerConfiguration, ZapScanner> zapScannerFactory = DEFAULT_FACTORY;
 
@@ -34,17 +34,26 @@ public class ZapSecurityScanExtension implements BeforeEachCallback, AfterTestEx
         zapScannerFactory = factory;
     }
 
-
     @Override
     public void beforeEach(TestExtensionContext context) {
-        @SuppressWarnings("OptionalGetWithoutIsPresent")
+
+        if (!context.getTestClass().isPresent()) {
+            throw new IllegalStateException("There is no test class");
+        }
+
         Field[] declaredFields = context.getTestClass().get().getDeclaredFields();
 
         List<Field> configFields = Arrays.stream(declaredFields).filter(field -> field.getType()
                 .equals(ZapScannerConfiguration.class)).collect(Collectors.toList());
 
-        if(configFields.size() != 1){
-            throw new IllegalStateException("There is no unique ConfigFields");
+        if(configFields.size() == 0){
+            // try the superclass
+            Field[] declaredFieldsSuperClass = context.getTestClass().get().getSuperclass().getDeclaredFields();
+            configFields = Arrays.stream(declaredFieldsSuperClass).filter(field -> field.getType()
+                    .equals(ZapScannerConfiguration.class)).collect(Collectors.toList());
+            if (configFields.size() != 1) {
+                throw new IllegalStateException("There is no unique ConfigFields");
+            }
         }
 
         Field field = configFields.get(0);
@@ -73,6 +82,7 @@ public class ZapSecurityScanExtension implements BeforeEachCallback, AfterTestEx
         ZapScannerConfiguration config = store.get("zapScannerConfiguration", ZapScannerConfiguration.class);
         ZapScanner zapScanner = store.get("zapScanner", ZapScanner.class);
 
+        LOGGER.info("Initiating zap scan");
         List<Alert> listOfAlerts = zapScanner.completeScan(config.getBaseUrl(), config.isInScopeOnly(), config.getPolicy());
         AlertList alerts = new AlertList(listOfAlerts);
         store.put("alerts", alerts);

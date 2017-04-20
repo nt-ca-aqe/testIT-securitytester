@@ -57,6 +57,8 @@ public class ZapScannerImpl implements ZapScanner {
             if (withSpider) {
                 spider(baseUrl);
                 Thread.sleep(1500);//Let Spider some Time!
+            } else {
+                LOG.info("Spider is deactivated");
             }
             alerts.addAll(allActiveScan(baseUrl, inScopeOnly, scanPolicyName));
 
