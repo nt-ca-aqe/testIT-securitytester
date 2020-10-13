@@ -51,7 +51,7 @@
         <skipUnitTests>false</skipUnitTests>
         <skipIntegrationTests>false</skipIntegrationTests>
 
-        <version.junit4>4.12</version.junit4>
+        <version.junit4>4.13.1</version.junit4>
         <version.junit5.jupiter>5.0.0-M3</version.junit5.jupiter>
         <version.junit5.vintage>4.12.0-M3</version.junit5.vintage>
         <version.junit5.platform>1.0.0-M3</version.junit5.platform>
